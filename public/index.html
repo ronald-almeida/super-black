@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Escolha sua condição para a Super Black Bússola Vitalícia 2026 e finalize sua compra com Pix.">
+  <meta name="theme-color" content="#141414">
+  <title>Super Black Bússola Vitalícia 2026</title>
+  <link rel="icon" href="/assets/super-black.png">
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <main id="offers" class="offers-page">
+    <header class="offer-heading">
+      <p class="eyebrow">A OFERTA</p>
+      <h1>ESCOLHA A SUA CONDIÇÃO.</h1>
+      <p class="intro">Quanto mais perto da Bússola você já está, melhor a condição. As três levam<br class="desktop-break"> exatamente as mesmas 25 entregas.</p>
+    </header>
+    <div class="offer-grid" id="offer-grid"></div>
+  </main>
+  <main id="checkout" class="checkout-page" hidden>
+    <a href="/" class="back-link">← Voltar às condições</a>
+    <div class="checkout-shell">
+      <div class="country"><span>BR</span> Brasil <span aria-hidden="true">⌄</span></div>
+      <header class="product-header">
+        <img src="/assets/super-black.png" width="116" height="116" alt="Super Black Bússola Vitalícia">
+        <div><h1>Super Black Bússola Vitalícia 2026</h1><p>Autor: Bússola Executiva</p><strong id="product-price"></strong><p>Pagamento à vista no Pix</p></div>
+      </header>
+      <form id="checkout-form">
+        <fieldset class="personal-data">
+          <legend>Dados pessoais</legend>
+          <div class="field"><label for="email">Seu email</label><input id="email" name="email" type="email" autocomplete="email" placeholder="Digite seu email para receber a compra" maxlength="254" required></div>
+          <div class="field"><label for="confirmEmail">Confirme seu email</label><input id="confirmEmail" name="confirmEmail" type="email" autocomplete="off" placeholder="Digite novamente seu email" maxlength="254" required></div>
+          <div class="field"><label for="name">Nome completo</label><input id="name" name="name" autocomplete="name" placeholder="Digite seu nome completo" minlength="3" maxlength="120" required></div>
+          <div class="field-row">
+            <div class="field"><label for="document">CPF/CNPJ</label><input id="document" name="document" inputmode="numeric" placeholder="Digite o número do seu CPF ou CNPJ" maxlength="18" required></div>
+            <div class="field"><label for="phone">Celular</label><div class="phone-input"><span>BR +55 <span aria-hidden="true">⌄</span></span><input id="phone" name="phone" type="tel" autocomplete="tel-national" placeholder="(11) 96123-4567" maxlength="16" required></div></div>
+          </div>
+        </fieldset>
+        <section class="payment-section" aria-labelledby="payment-title">
+          <h2 id="payment-title">Escolha a forma de pagamento</h2>
+          <div class="payment-box">
+            <div class="payment-label"><span class="radio-dot" aria-hidden="true"></span><svg class="pix-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M10 4 14 0a3 3 0 0 1 4 0l4 4-5 5a1.5 1.5 0 0 1-2 0ZM4 10 0 14a3 3 0 0 0 0 4l4 4 6-6Zm24 0 4 4a3 3 0 0 1 0 4l-4 4-6-6ZM10 28l4 4a3 3 0 0 0 4 0l4-4-5-5a1.5 1.5 0 0 0-2 0ZM5 8l3-3 6 6a3 3 0 0 0 4 0l6-6 3 3-7 7a1.5 1.5 0 0 0 0 2l7 7-3 3-6-6a3 3 0 0 0-4 0l-6 6-3-3 7-7a1.5 1.5 0 0 0 0-2Z"/></svg><strong>Pix</strong></div>
+            <div class="pix-benefits">
+              <article><span class="benefit-icon" aria-hidden="true">◷</span><h3>Aprovação imediata</h3><p>O pagamento com Pix leva pouco tempo para ser processado.</p></article>
+              <article><svg class="benefit-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 8 4v6c0 5-8 10-8 10S4 17 4 12V6Z"/><path d="m8 12 3 3 5-6"/></svg><h3>Transação segura</h3><p>O Pix foi desenvolvido pelo Banco Central para facilitar suas compras, garantindo a proteção dos seus dados.</p></article>
+              <article><svg class="benefit-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 2h7v7H2zM15 2h7v7h-7zM2 15h7v7H2zM15 15h3v3h-3zM21 15v7h-6"/></svg><h3>Finalize sua compra<br> com facilidade</h3><p>É só acessar a área Pix no aplicativo do seu banco e escanear o QR code ou digitar o código.</p></article>
+            </div>
+          </div>
+          <details class="more"><summary>Mostrar mais <span aria-hidden="true">⌄</span></summary><p>Após gerar o Pix, escaneie o QR code ou copie o código e use a opção “Pix Copia e Cola” no aplicativo do seu banco. Confira o valor e o recebedor antes de confirmar.</p></details>
+        </section>
+        <section class="purchase-details"><h2>Detalhes da compra</h2><div class="purchase-item"><strong>Super Black Bússola Vitalícia 2026</strong><span id="summary-price"></span></div></section>
+        <p id="form-error" class="error" role="alert" hidden></p>
+        <button type="submit" class="generate-button" id="generate">Gerar Pix</button>
+        <p class="processor"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 10V7a6 6 0 0 1 12 0v3M4 10h16v12H4z"/></svg> Pagamento processado por <strong>Black Cat</strong></p>
+      </form>
+    </div>
+  </main>
+  <dialog id="pix-dialog" aria-labelledby="pix-title">
+    <button type="button" class="close-dialog" id="close-dialog" aria-label="Fechar janela">×</button>
+    <div class="dialog-header"><span class="secure-tag">PAGAMENTO VIA PIX</span><h2 id="pix-title">Falta pouco para garantir sua vaga!</h2><p>Escaneie o QR code ou copie o código abaixo.</p></div>
+    <strong class="modal-price" id="modal-price"></strong>
+    <img id="qr-image" class="qr-image" alt="QR code para pagamento via Pix" width="220" height="220" hidden>
+    <p class="expiration" id="expiration"></p>
+    <label for="pix-code">Pix Copia e Cola</label><textarea id="pix-code" rows="3" readonly spellcheck="false"></textarea>
+    <button type="button" id="copy-pix" class="generate-button">Copiar código Pix</button>
+    <p id="copy-feedback" class="copy-feedback" role="status"></p>
+    <p id="payment-status" class="payment-status" role="status">Aguardando pagamento</p>
+    <p class="modal-hint">No aplicativo do seu banco, escolha Pix → Copia e Cola. Confira os dados e confirme o pagamento.</p>
+  </dialog>
+</body>
+</html>
