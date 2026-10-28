@@ -1,5 +1,7 @@
 {
   "version": 2,
+  "framework": null,
+  "buildCommand": "",
   "outputDirectory": "public",
   "rewrites": [{ "source": "/checkout", "destination": "/index.html" }],
   "headers": [{ "source": "/(.*)", "headers": [
