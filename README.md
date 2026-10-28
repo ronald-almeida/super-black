@@ -36,6 +36,9 @@ Em uma hospedagem Node tradicional, execute `npm start` com `HOST=0.0.0.0`, `POR
 - A confirmação consulta `GET /api/status` e o endpoint de status da Black Cat a cada oito segundos enquanto o pop-up estiver aberto. Um token assinado limita a consulta à cobrança criada.
 - Não há banco, cookies de pagamento, localStorage ou gravação em arquivos. O Pix fica apenas na memória da página; atualizar/fechar a página perde essa referência. A operadora mantém o registro da transação no próprio serviço.
 - Botão bloqueado durante a criação e reabertura do mesmo Pix na página evitam cliques repetidos. Como não há armazenamento nem idempotência documentada na API, recarregar a página ou repetir após falha de rede pode criar outra cobrança; não há promessa de deduplicação entre sessões.
+- O pop-up abre imediatamente após validar o formulário e mostra o andamento enquanto aguarda a operadora; QR code e código são mostrados apenas depois da resposta real. Fechar o pop-up não repete nem cancela a solicitação em andamento.
+- Ao começar a preencher o formulário, uma única requisição `OPTIONS /api/pix` prepara a função, sem chamar a Black Cat nem criar venda. A função é executada em São Paulo (`gru1`). O ganho real depende da rede e da operadora.
+- `Server-Timing` separa processamento local (`app`), espera pela Black Cat (`blackcat`) e total da função. O evento `pix_create_timing` nos logs contém apenas tempos, status HTTP e região. Não contém dados do comprador nem código Pix. Essas medições não incluem a inicialização da função antes do handler ou a rede do navegador.
 - Não há liberação automática de curso, envio de email ou webhook. O pagamento confirmado é exibido na tela e fica disponível no painel Black Cat.
 - Não são registradas chaves nem dados pessoais no console do servidor. Configure também a hospedagem para não registrar corpos de requisição nem query strings de `/api/status`.
 

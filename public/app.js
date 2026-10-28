@@ -31,6 +31,10 @@ if (checkoutRoute && selected) {
 
 const form = $('#checkout-form');
 const button = $('#generate');
+// Start the same server function while the buyer fills in the form, without creating a charge.
+if (checkoutRoute && selected) form.addEventListener('focusin', () => {
+  void fetch('/api/pix', { method: 'OPTIONS', cache: 'no-store', signal: AbortSignal.timeout(5000) }).catch(() => {});
+}, { once: true });
 function validateForm() {
   const values = Object.fromEntries(new FormData(form));
   $('#confirmEmail').setCustomValidity(values.email.trim().toLowerCase() === values.confirmEmail.trim().toLowerCase() ? '' : 'Os emails precisam ser iguais.');
@@ -54,7 +58,17 @@ $('#document').addEventListener('input', event => {
     : n.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{0,2}).*/, '$1.$2.$3/$4-$5');
 });
 
-function showPayment() {
+function openPixDialog() {
+  if (!dialog.open) dialog.showModal();
+  document.body.style.overflow = 'hidden';
+}
+
+function showPayment({ open = true } = {}) {
+  $('#pix-loading').hidden = true;
+  $('#dialog-error').hidden = true;
+  $('#pix-result').hidden = false;
+  $('#pix-title').textContent = 'Falta pouco para garantir sua vaga!';
+  $('#pix-description').textContent = 'Escaneie o QR code ou copie o código abaixo.';
   $('#pix-code').value = payment.copyPaste;
   $('#copy-pix').disabled = false;
   $('#copy-pix').textContent = 'Copiar código Pix';
@@ -70,8 +84,7 @@ function showPayment() {
     $('#copy-pix').disabled = true;
     $('#qr-image').hidden = true;
   }
-  dialog.showModal();
-  document.body.style.overflow = 'hidden';
+  if (open) openPixDialog();
   if (!['PAID','REFUNDED'].includes(payment.status)) checkPayment();
 }
 
@@ -83,6 +96,17 @@ form.addEventListener('submit', async event => {
   $('#form-error').hidden = true;
   button.disabled = true;
   button.textContent = 'Gerando seu Pix…';
+  $('#pix-title').textContent = 'Gerando seu Pix';
+  $('#pix-description').textContent = 'Estamos preparando seu pagamento.';
+  $('#pix-result').hidden = true;
+  $('#dialog-error').hidden = true;
+  $('#pix-loading').hidden = false;
+  $('#generation-status').textContent = 'Solicitando seu Pix…';
+  openPixDialog();
+  const progressTimers = [
+    setTimeout(() => { $('#generation-status').textContent = 'Aguardando a emissão do código pela operadora…'; }, 3000),
+    setTimeout(() => { $('#generation-status').textContent = 'A operadora ainda está processando. Aguarde para evitar outra solicitação.'; }, 10000)
+  ];
   try {
     const response = await fetch('/api/pix', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -94,13 +118,19 @@ form.addEventListener('submit', async event => {
     payment = result;
     // Dados de pagamento ficam somente na memória desta página, nunca em localStorage.
     for (const input of form.querySelectorAll('input')) input.readOnly = true;
-    showPayment();
+    showPayment({ open: dialog.open });
   } catch (error) {
     $('#form-error').textContent = error.name === 'TimeoutError' || error.name === 'AbortError'
       ? 'A resposta demorou mais que o esperado. Antes de tentar novamente, verifique se já recebeu uma cobrança.'
       : error.message === 'Failed to fetch' ? 'Não foi possível conectar. Verifique sua internet e tente novamente.' : error.message;
     $('#form-error').hidden = false;
+    $('#pix-loading').hidden = true;
+    $('#pix-title').textContent = 'Não foi possível concluir';
+    $('#pix-description').textContent = 'Feche esta janela para voltar ao checkout.';
+    $('#dialog-error').textContent = $('#form-error').textContent;
+    $('#dialog-error').hidden = false;
   } finally {
+    progressTimers.forEach(clearTimeout);
     button.disabled = false;
     button.textContent = payment ? 'Visualizar meu Pix' : 'Gerar Pix';
   }

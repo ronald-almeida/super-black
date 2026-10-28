@@ -62,8 +62,11 @@
   </main>
   <dialog id="pix-dialog" aria-labelledby="pix-title">
     <button type="button" class="close-dialog" id="close-dialog" aria-label="Fechar janela">×</button>
-    <div class="dialog-header"><span class="secure-tag">PAGAMENTO VIA PIX</span><h2 id="pix-title">Falta pouco para garantir sua vaga!</h2><p>Escaneie o QR code ou copie o código abaixo.</p></div>
+    <div class="dialog-header"><span class="secure-tag">PAGAMENTO VIA PIX</span><h2 id="pix-title">Falta pouco para garantir sua vaga!</h2><p id="pix-description">Escaneie o QR code ou copie o código abaixo.</p></div>
     <strong class="modal-price" id="modal-price"></strong>
+    <div id="pix-loading" class="pix-loading" role="status" hidden><span class="pix-spinner" aria-hidden="true"></span><p id="generation-status">Solicitando seu Pix…</p><small>O código aparecerá aqui assim que estiver pronto.</small></div>
+    <p id="dialog-error" class="error" role="alert" hidden></p>
+    <div id="pix-result">
     <img id="qr-image" class="qr-image" alt="QR code para pagamento via Pix" width="220" height="220" hidden>
     <p class="expiration" id="expiration"></p>
     <label for="pix-code">Pix Copia e Cola</label><textarea id="pix-code" rows="3" readonly spellcheck="false"></textarea>
@@ -71,6 +74,7 @@
     <p id="copy-feedback" class="copy-feedback" role="status"></p>
     <p id="payment-status" class="payment-status" role="status">Aguardando pagamento</p>
     <p class="modal-hint">No aplicativo do seu banco, escolha Pix → Copia e Cola. Confira os dados e confirme o pagamento.</p>
+    </div>
   </dialog>
 </body>
 </html>

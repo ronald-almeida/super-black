@@ -82,3 +82,51 @@ test('bloqueia origem externa, método incorreto e corpo excessivo', async () =>
   assert.equal((await service.create(new Request('https://checkout.example/api/pix'))).status,405);
   assert.equal((await service.create(request({large:'a'.repeat(13000)}))).status,413);
 });
+test('preparação antecipada não gera cobrança nem acessa a operadora', async () => {
+  let calls = 0;
+  const service = createPaymentService({apiKey:'test',fetchImpl:async()=>{calls++;throw new Error('Não pode cobrar');}});
+  const result = await service.create(new Request('https://checkout.example/api/pix',{method:'OPTIONS'}));
+  assert.equal(result.status,204);
+  assert.equal(calls,0);
+  assert.equal(await result.text(),'');
+});
+test('mede a espera pela operadora, sem repetir cobrança nem registrar dados pessoais', async () => {
+  const events = [];
+  let calls = 0;
+  const service = createPaymentService({apiKey:'private-test-key',log:line=>events.push(JSON.parse(line)),fetchImpl:async()=>{
+    calls++;
+    await new Promise(resolve=>setTimeout(resolve,45));
+    return response(sale(24700));
+  }});
+  const result = await service.create(request({offerId:'club',customer}));
+  assert.equal(result.status,201);
+  assert.equal(calls,1);
+  assert.equal(events.length,1);
+  assert.ok(events[0].gatewayMs >= 35);
+  assert.ok(events[0].totalMs >= events[0].gatewayMs);
+  assert.match(result.headers.get('server-timing'),/blackcat;dur=/);
+  assert.deepEqual(Object.keys(events[0]).sort(),['event','gatewayMs','region','status','totalMs']);
+  const serialized = JSON.stringify(events);
+  for (const privateValue of [customer.email,customer.document,'private-test-key','CODIGO-EXCLUSIVO-DE-TESTE']) assert.ok(!serialized.includes(privateValue));
+});
+test('falha da operadora é medida e não provoca retry automático', async () => {
+  let calls = 0;
+  const events = [];
+  const service = createPaymentService({apiKey:'test',log:line=>events.push(JSON.parse(line)),fetchImpl:async()=>{
+    calls++;
+    throw new DOMException('Timeout','TimeoutError');
+  }});
+  const result = await service.create(request({offerId:'club',customer}));
+  assert.equal(result.status,504);
+  assert.equal(calls,1);
+  assert.equal(events[0].status,504);
+  assert.match(result.headers.get('server-timing'),/blackcat;dur=/);
+});
+test('timeout durante a leitura da resposta também retorna 504', async () => {
+  const service = createPaymentService({apiKey:'test',log:()=>{},fetchImpl:async()=>({
+    ok:true, json:async()=>{throw new DOMException('Aborted','AbortError');}
+  })});
+  const result = await service.create(request({offerId:'club',customer}));
+  assert.equal(result.status,504);
+  assert.match((await result.json()).error,/operadora demorou/);
+});
